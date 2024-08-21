@@ -1,0 +1,40 @@
+{
+    "name": "astro-blog-by-blogger-api",
+    "type": "module",
+    "version": "0.0.23",
+    "description": "Componente para poder mostrar un Blog a través de las entradas de Blogger API",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:Grd92/astro-blog-by-blogger-api.git"
+    },
+    "homepage": "https://github.com/Grd92/astro-blog-by-blogger-api",
+    "keywords": [
+        "astro",
+        "withastro",
+        "astro-component",
+        "astro-blog-by-blogger-api",
+        "blogger-api"
+    ],
+    "author": {
+        "name": "Iván Garrido"
+    },
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro check && astro build",
+        "preview": "astro preview",
+        "astro": "astro"
+    },
+    "dependencies": {
+        "@astrojs/check": "^0.5.10",
+        "@astrojs/cloudflare": "^11.0.4",
+        "@astrojs/node": "^8.2.5",
+        "astro": "^4.6.0",
+        "googleapis": "^134.0.0",
+        "typescript": "^5.4.5"
+    },
+    "devDependencies": {
+        "@astrojs/tailwind": "^5.1.0",
+        "tailwindcss": "^3.4.9"
+    }
+}

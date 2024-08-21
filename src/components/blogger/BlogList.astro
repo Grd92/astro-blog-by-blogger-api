@@ -1,0 +1,153 @@
+---
+import BloggerAPI from "../../api/blogger-api/Api.ts";
+
+let pageToken = undefined;
+try {
+    const formData = await Astro.request.formData();
+    pageToken = formData.get("pageToken")?.toString() || undefined;
+} catch (error) {}
+
+const { env } = Astro.locals.runtime;
+const apiKey = env.GOOGLE_API_KEY || import.meta.env.GOOGLE_API_KEY;
+const blogId = env.GOOGLE_BLOG_ID || import.meta.env.GOOGLE_BLOG_ID;
+const pageLength =
+    env.GOOGLE_DEFAULT_PAGE_LENGHT ||
+    import.meta.env.GOOGLE_DEFAULT_PAGE_LENGHT;
+const slogan = env.SLOGAN_BLOG || import.meta.env.SLOGAN_BLOG;
+
+const showSearch = false;
+
+const bloggerApiJs = new BloggerAPI(apiKey);
+const totalItems = (await bloggerApiJs.getTotalEntries(blogId)).posts
+    .totalItems;
+
+const posts = await bloggerApiJs.getEntries(blogId, pageToken, pageLength); // initial load
+---
+
+<div class="blog">
+    <div class="w-full p-12 bg-white">
+        <div
+            id="blog-container-title"
+            class="flex items-end justify-between mb-12 header flex-col md:flex-row"
+        >
+            <div class="title">
+                <p class="text-4xl font-light text-gray-800">
+                    {slogan ?? ""}
+                </p>
+            </div>
+
+            <!-- {
+                showSearch === true ? (
+                    <div class="text-end sm:text-center md:text-center">
+                        <form class="flex flex-col justify-center w-3/4 max-w-sm space-y-3 md:flex-row md:w-full md:space-x-3 md:space-y-0 w-full">
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id='"form-subscribe-Search'
+                                    class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                                    placeholder="Enter a title"
+                                />
+                            </div>
+                            <button
+                                class="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200"
+                                type="submit"
+                            >
+                                Search
+                            </button>
+                        </form>
+                    </div>
+                ) : (
+                    <div class="hidden" />
+                )
+            } -->
+        </div>
+        <div
+            id="blog-container-list"
+            class="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3"
+        >
+            {
+                posts.items.map((itemBlog: any) => (
+                    <div class="m-auto overflow-hidden rounded-lg shadow-lg cursor-pointer min-h-[200px] w-full border blog-list-item">
+                        <a
+                            href={"/blog/post" + new URL(itemBlog.url).pathname}
+                            target="_blank"
+                            class="block w-full h-full"
+                        >
+                            <div class="w-full p-4 bg-white">
+                                <p class="font-medium text-gray-300 text-xs">
+                                    {new Date(itemBlog.published)
+                                        .toLocaleDateString("es-ES", {
+                                            day: "2-digit",
+                                            month: "long",
+                                            year: "numeric",
+                                        })
+                                        .replaceAll("de", "/")
+                                        .toUpperCase()}
+                                </p>
+                                <p class="mb-2 text-xl font-medium text-gray-800">
+                                    {itemBlog.title}
+                                </p>
+
+                                <div class="flex flex-wrap items-center mt-4 justify-starts">
+                                    {itemBlog.labels?.map((label: string) => (
+                                        <div class="text-xs mr-2 mb-2 py-1.5 px-4 text-gray-600 bg-blue-100 rounded-2xl">
+                                            {label}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                ))
+            }
+        </div>
+        {
+            posts?.items?.length === 0 ? (
+                <div class="text-center">
+                    <h3 class="text-lg font-bold text-center">
+                        Estamos redactando nuestro próximo post, ¡Vuelve pronto!
+                    </h3>
+                </div>
+            ) : (
+                ""
+            )
+        }
+    </div>
+
+    {
+        posts.nextPageToken !== undefined ? (
+            <>
+                <form
+                    action="/blog"
+                    method="post"
+                    class="hidden"
+                    id="blog-form-load"
+                >
+                    <input
+                        type="hidden"
+                        name="pageToken"
+                        value={posts.nextPageToken}
+                    />
+                </form>
+                <div class="w-full text-center">
+                    <button
+                        type="submit"
+                        form="blog-form-load"
+                        class="text-base text-zinc-500 hover:text-zinc-800 hover:font-semibold hover:underline"
+                    >
+                        Ver más antiguas
+                    </button>
+                </div>
+            </>
+        ) : (
+            ""
+        )
+    }
+
+    <!-- class="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg m-auto w-auto" -->
+</div>
+<style>
+    .blog {
+        overflow: auto;
+    }
+</style>

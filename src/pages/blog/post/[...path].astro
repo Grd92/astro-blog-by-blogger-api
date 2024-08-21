@@ -1,0 +1,10 @@
+---
+export const prerender = false;
+
+let { path } = Astro.params;
+if (path === undefined) return Astro.redirect("/blog");
+
+import Blog from "../../../components/blogger/BlogPost.astro";
+---
+
+<Blog path={path ?? ""} />

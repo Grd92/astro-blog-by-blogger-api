@@ -1,0 +1,42 @@
+---
+interface Props {
+    path: string;
+}
+
+import BloggerAPI from "../../api/blogger-api/Api.ts";
+
+let { path } = Astro.props;
+if (path === undefined) path = "";
+
+const { env } = Astro.locals.runtime;
+const apiKey = env.GOOGLE_API_KEY || import.meta.env.GOOGLE_API_KEY;
+const blogId = env.GOOGLE_BLOG_ID || import.meta.env.GOOGLE_BLOG_ID;
+
+const bloggerApiJs = new BloggerAPI(apiKey);
+const postData: any = await bloggerApiJs.getEntryByPath(blogId, `/${path}`);
+---
+
+<title>Blog - {postData.title}</title>
+
+<div class="blog">
+    <div class="show-details">
+        <div class="bg-white">
+            <div
+                class="text-center w-full mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20"
+            >
+                <h2 class="text-3xl font-extrabold text-black sm:text-4xl">
+                    <span class="block">{postData.title}</span>
+                </h2>
+            </div>
+        </div>
+        <div class="m-auto w-auto max-w-[980px]">
+            <Fragment set:html={postData.content} />
+        </div>
+    </div>
+</div>
+
+<style>
+    .blog {
+        overflow: auto;
+    }
+</style>
