@@ -70,7 +70,6 @@ Inside of Astro Blog (by Blogger Api - Google), you'll see the following folders
 │       └── blogger/
 │           └── BlogList.astro
 │           └── BlogPost.astro
-│           └── build-blog.css
 │   └── pages/
 │       └── index.astro
 │       └── post/
