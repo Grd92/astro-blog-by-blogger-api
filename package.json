@@ -2,7 +2,7 @@
     "name": "astro-blog-by-blogger-api",
     "type": "module",
     "version": "0.0.23",
-    "description": "Componente para poder mostrar un Blog a través de las entradas de Blogger API",
+    "description": "Astro component to display a Blog through Blogger API entries",
     "repository": {
         "type": "git",
         "url": "git@github.com:Grd92/astro-blog-by-blogger-api.git"
